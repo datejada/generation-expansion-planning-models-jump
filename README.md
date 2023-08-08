@@ -6,8 +6,6 @@ The following files solve the GEP problem for three scenarios of wind and solar 
 
 The models are developed in [JuMP](https://jump.dev/JuMP.jl/stable/) v1.8.0 and solved using [HiGHS](https://highs.dev/) v1.4.3.
 
-The main references to model the optimization problems are:
+The main references to model the optimization problems is:
 
 [1] [Optimization Techniques by Andrés Ramos Galán](https://pascua.iit.comillas.edu/aramos/OT.htm)
-
-[2] [Good Optimization Modeling Practices using Pyomo](https://pascua.iit.comillas.edu/aramos/simio/transpa/s_GoodOptimizationModelingPracticesPyomo.pdf)
