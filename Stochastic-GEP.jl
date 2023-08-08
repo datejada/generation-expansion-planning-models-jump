@@ -40,7 +40,7 @@ p_unit_capacity   = Dict(        (row.g)        => row.pUnitCap for row in eachr
 p_sc_prob         = Dict((row.sc)               => row.pScProb  for row in eachrow(scenario_df))     #probability of scenario [p.u.]
 
 # Model
-model = Model(HiGHS.Optimizer)
+model = Model(optimizer_with_attributes(HiGHS.Optimizer, "mip_rel_gap" => 0.0))
 
 # Variables
 @variable(model, 0 ≤ v_production[SC,G,P])           #production [MW] 
