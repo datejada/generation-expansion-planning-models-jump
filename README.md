@@ -4,7 +4,7 @@ The following files solve the GEP problem for three scenarios of wind and solar 
 
 * **Stochastic-GEP.jl**: Two-Stage Stochastic Generation Expansion Planning
 
-The models are developed in [JuMP](https://jump.dev/JuMP.jl/stable/) v1.8.0 and solved using [HiGHS](https://highs.dev/) v1.4.3.
+The models are developed in [Julia](https://julialang.org/) v1.8.5, using the package [JuMP](https://jump.dev/JuMP.jl/stable/) v1.8.0, and solved using [HiGHS](https://highs.dev/) v1.4.3.
 
 The main reference to model the optimization problems is:
 
