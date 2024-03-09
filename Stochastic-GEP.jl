@@ -129,5 +129,6 @@ df = CSV.read(joinpath(OUTPUT_FOLDER, "oGEP_Invest_Result.csv"), DataFrames.Data
     xlabel="Generation Units",
     ylabel="Installed Capacity [MW]",
     legend=false,
+    dpi=300,
 )
-
+savefig(joinpath(OUTPUT_FOLDER, "investment_results.png"))
