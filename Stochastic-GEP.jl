@@ -121,7 +121,7 @@ end
 close(output_file)
 
 # Plot the investment results
-plotly()
+#plotly() # uncomment to use plotly backend
 df = CSV.read(joinpath(OUTPUT_FOLDER, "oGEP_Invest_Result.csv"), DataFrames.DataFrame)
 @df df bar(:g,
     :InstalCap_MW,
@@ -131,4 +131,4 @@ df = CSV.read(joinpath(OUTPUT_FOLDER, "oGEP_Invest_Result.csv"), DataFrames.Data
     legend=false,
     dpi=300,
 )
-savefig(joinpath(OUTPUT_FOLDER, "investment_results.png"))
+#savefig(joinpath(OUTPUT_FOLDER, "investment_results.png"))
