@@ -1,5 +1,7 @@
 # Generation Expansion Planning (GEP) models considering uncertainties on renewable energy resources (RES) using Julia/JuMP
 
+[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/datejada/generation-expansion-planning-models-jump/main)
+
 The following files solve the GEP problem for three scenarios of wind and solar production using different approaches:
 
 * **Stochastic-GEP.jl**: Two-Stage Stochastic Generation Expansion Planning
