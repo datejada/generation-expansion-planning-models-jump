@@ -126,7 +126,8 @@ CSV.write(joinpath(OUTPUT_FOLDER, "oGEP_ENS.csv"),
 
 # Plot the investment results
 #plotly() # uncomment to use plotly backend
-df = CSV.read(joinpath(OUTPUT_FOLDER, "oGEP_Invest_Result.csv"), DataFrames.DataFrame)
+df = CSV.read(joinpath(OUTPUT_FOLDER, "oGEP_Investment.csv"), DataFrames.DataFrame)
+df.InstalCap_MW = df.instal_units .* [p_unit_capacity[g] for g in df.g]
 @df df bar(:g,
     :InstalCap_MW,
     title="Investment Results",
