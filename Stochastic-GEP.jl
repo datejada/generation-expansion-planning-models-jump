@@ -137,3 +137,67 @@ df.InstalCap_MW = df.instal_units .* [p_unit_capacity[g] for g in df.g]
     dpi=300,
 )
 #savefig(joinpath(OUTPUT_FOLDER, "investment_results.png"))
+
+# Plot the production results
+
+function get_production_tmp(scenario, model)
+    production_table = Containers.rowtable(value, model[:v_production]; header=[:sc, :g, :p, :value])
+    production_df = DataFrames.DataFrame(production_table)
+
+    ens_table = Containers.rowtable(value, model[:v_ens]; header=[:sc, :p, :value])
+    ens_df = DataFrames.DataFrame(ens_table)
+
+    filter!(row -> row.sc == scenario, production_df)
+    filter!(row -> row.sc == scenario, ens_df)
+
+    # drop the scenario column 
+    production_tmp = production_df[:, 2:end]
+
+    # unstack column g
+    production_tmp = unstack(production_tmp, :g, :value)
+
+    # drop column P
+    production_tmp = production_tmp[:, 2:end]
+
+    # add column ens to production_tmp
+    production_tmp = hcat(production_tmp, ens_df[:, 3])
+
+    return production_tmp
+end
+
+function plot_production(model)
+    # Extract the variable v_production and v_ens from the model
+    v_production = value.(model[:v_production])
+
+    # Extract unique scenarios, generators, and periods
+    scenarios = unique([k[1] for k in keys(v_production)])
+    generators = unique([k[2] for k in keys(v_production)])
+    generators = push!(generators, "ens")
+    periods = unique([k[3] for k in keys(v_production)])
+
+    # Create a plot for each scenario
+    p = plot(layout=(length(scenarios), 1)) # Create subplots for each scenario
+    for (i, sc) in enumerate(scenarios)
+        # 
+        total_production_df = get_production_tmp(sc, model)
+        groupedbar!(
+            Matrix(total_production_df);
+            bar_position=:stack,
+            labels=reshape(generators, 1, length(generators)),
+            legend=:topleft,
+            title=sc,
+            subplot=i,
+        )
+
+        # Add demand as a black line
+        demand = [p_demand[p] for p in periods]
+        plot!(p[i], demand, label="demand", color=:black, linewidth=2, linestyle=:dash)
+    end
+
+    # Set plot attributes
+    plot!(ylabel="Production", legend=:outertopright)
+
+    return p
+end
+
+plot_production(model)
