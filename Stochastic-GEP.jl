@@ -113,12 +113,16 @@ optimize!(model)
 @show objective_value(model)
 
 # Writing the investment results to a CSV file
-output_file = open(joinpath(OUTPUT_FOLDER, "oGEP_Invest_Result.csv"), "w")
-write(output_file, "g,InstalUnits,InstalCap_MW\n")
-for g in G
-    write(output_file, "$g,$(value(v_investment[g])),$(value(p_unit_capacity[g]) * value(v_investment[g]))\n")
-end
-close(output_file)
+CSV.write(joinpath(OUTPUT_FOLDER, "oGEP_Investment.csv"),
+    Containers.rowtable(value, v_investment; header=[:g, :instal_units]),
+)
+CSV.write(joinpath(OUTPUT_FOLDER, "oGEP_Production.csv"),
+    Containers.rowtable(value, v_production; header=[:sc, :g, :h, :production]),
+)
+
+CSV.write(joinpath(OUTPUT_FOLDER, "oGEP_ENS.csv"),
+    Containers.rowtable(value, v_ens; header=[:sc, :h, :ens]),
+)
 
 # Plot the investment results
 #plotly() # uncomment to use plotly backend
