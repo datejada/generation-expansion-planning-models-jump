@@ -19,8 +19,8 @@ Reads data from CSV files and returns sets and parameters.
 - `input_folder::String`: The path to the folder containing the input CSV files.
 
 # Returns
-- `sets::Dict{String, Any}`: A dictionary containing the sets P, SC, and G.
-- `params::Dict{String, Any}`: A dictionary containing the parameters `p_availability`, `p_demand`, `p_investment_cost`, `p_variable_cost`, `p_unit_capacity`, `p_sc_prob`, `p_rp_weight`, and `p_ens_cost`.
+- `sets::Dict{Symbol, Any}`: A dictionary containing the sets P, SC, and G.
+- `params::Dict{Symbol, Any}`: A dictionary containing the parameters `p_availability`, `p_demand`, `p_investment_cost`, `p_variable_cost`, `p_unit_capacity`, `p_sc_prob`, `p_rp_weight`, and `p_ens_cost`.
 """
 function read_data(input_folder)
     # Files names
@@ -40,7 +40,7 @@ function read_data(input_folder)
     SC = scenario_df.sc  #scenarios
     G  = generation_df.g #generation units
 
-    sets = Dict("P" => P, "SC" => SC, "G" => G)
+    sets = Dict(:P => P, :SC => SC, :G => G)
 
     # Parameters
     p_availability    = Dict((row.sc, row.g, row.p) => row.pAviProf for row in eachrow(availability_df)) #availability profile [p.u.]
@@ -53,14 +53,14 @@ function read_data(input_folder)
     p_ens_cost        = 0.180 #energy not supplied cost    [kEUR/MWh]
 
     params = Dict(
-        "p_availability"    => p_availability,
-        "p_demand"          => p_demand,
-        "p_investment_cost" => p_investment_cost,
-        "p_variable_cost"   => p_variable_cost,
-        "p_unit_capacity"   => p_unit_capacity,
-        "p_sc_prob"         => p_sc_prob,
-        "p_rp_weight"       => p_rp_weight,
-        "p_ens_cost"        => p_ens_cost,
+        :p_availability    => p_availability,
+        :p_demand          => p_demand,
+        :p_investment_cost => p_investment_cost,
+        :p_variable_cost   => p_variable_cost,
+        :p_unit_capacity   => p_unit_capacity,
+        :p_sc_prob         => p_sc_prob,
+        :p_rp_weight       => p_rp_weight,
+        :p_ens_cost        => p_ens_cost,
     )
     return sets, params
 end
@@ -71,8 +71,8 @@ end
 This function creates and solves a mathematical optimization model for a central planner problem.
 
 # Arguments
-- `sets::Dict{String, Any}`: A dictionary containing the sets of the problem.
-- `params::Dict{String, Any}`: A dictionary containing the parameters of the problem.
+- `sets::Dict{Symbol, Any}`: A dictionary containing the sets of the problem.
+- `params::Dict{Symbol, Any}`: A dictionary containing the parameters of the problem.
 
 # Returns
 - `model::Model`: The optimized model if a solution is found.
@@ -80,19 +80,19 @@ This function creates and solves a mathematical optimization model for a central
 """
 function create_and_solve_model(sets, params)
     # Extract sets
-    SC = sets["SC"]
-    G  = sets["G"]
-    P  = sets["P"]
+    SC = sets[:SC]
+    G  = sets[:G]
+    P  = sets[:P]
 
     # Extract parameters
-    p_availability    = params["p_availability"]
-    p_demand          = params["p_demand"]
-    p_investment_cost = params["p_investment_cost"]
-    p_variable_cost   = params["p_variable_cost"]
-    p_unit_capacity   = params["p_unit_capacity"]
-    p_sc_prob         = params["p_sc_prob"]
-    p_rp_weight       = params["p_rp_weight"]
-    p_ens_cost        = params["p_ens_cost"]
+    p_availability    = params[:p_availability]
+    p_demand          = params[:p_demand]
+    p_investment_cost = params[:p_investment_cost]
+    p_variable_cost   = params[:p_variable_cost]
+    p_unit_capacity   = params[:p_unit_capacity]
+    p_sc_prob         = params[:p_sc_prob]
+    p_rp_weight       = params[:p_rp_weight]
+    p_ens_cost        = params[:p_ens_cost]
 
     # Model
     model = Model(optimizer_with_attributes(HiGHS.Optimizer, "mip_rel_gap" => 0.0))
@@ -147,25 +147,42 @@ Plot the investment in generation units.
 - `model`: The model containing the investment variable.
 
 """
-function plot_investment(model)
+function plot_investment(model, sets, params)
     # Extract the variable v_investment from the model
     v_investment = value.(model[:v_investment])
 
-    # Convert DenseAxisArray to Array
-    v_investment_array = Array(v_investment.data)
+    # Calculate the investment in MW
+    v_investment_array = [v_investment[g] * params[:p_unit_capacity][g] for g in sets[:G]]
 
     # Extract generator names
     generator_names = [string(k[1]) for k in keys(v_investment)]
 
-    # Create a bar chart
-    return bar(
+    # Create a bar chart subplots
+    p = plot(; layout = (2, 1))
+
+    # Create a bar chart for the investment in MW
+    bar!(
         generator_names,
         v_investment_array;
-        xlabel = "Generation Units",
-        ylabel = "Investment",
-        title = "Investment in Generation Units",
+        xlabel = "",
+        ylabel = "Capacity [MW]",
+        title = "Investment Results",
         legend = false,
+        subplot = 1,
     )
+
+    # Create a bar chart for the number of installed units
+    bar!(
+        generator_names,
+        Array(v_investment);
+        xlabel = "Generation Technology",
+        ylabel = "Units [N]",
+        title = "",
+        legend = false,
+        subplot = 2,
+    )
+
+    return p
 end
 
 """
@@ -244,7 +261,7 @@ function plot_production(model, params)
         )
 
         # Add demand as a black line
-        demand = [params["p_demand"][p] for p in periods]
+        demand = [params[:p_demand][p] for p in periods]
         plot!(p[i], demand; label = "demand", color = :black, linewidth = 2, linestyle = :dash)
     end
 
@@ -281,7 +298,7 @@ function plot_dual_balance(model, params)
     # For each scenario, create a series
     for sc in scenarios
         dual = [dual_balance[sc, p] for p in periods]
-        plot!(p, periods, 1000 * dual / params["p_rp_weight"]; label = sc, linewidth = 2)
+        plot!(p, periods, 1000 * dual / params[:p_rp_weight]; label = sc, linewidth = 2)
     end
 
     # Set plot attributes
