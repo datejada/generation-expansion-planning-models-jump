@@ -151,8 +151,8 @@ function plot_investment(model, sets, params)
     # Extract the variable v_investment from the model
     v_investment = value.(model[:v_investment])
 
-    # Calculate the investment in MW
-    v_investment_array = [v_investment[g] * params[:p_unit_capacity][g] for g in sets[:G]]
+    # Calculate the investment capacity in MW
+    v_investment_cap = [v_investment[g] * params[:p_unit_capacity][g] for g in sets[:G]]
 
     # Extract generator names
     generator_names = [string(k[1]) for k in keys(v_investment)]
@@ -163,7 +163,7 @@ function plot_investment(model, sets, params)
     # Create a bar chart for the investment in MW
     bar!(
         generator_names,
-        v_investment_array;
+        v_investment_cap;
         xlabel = "",
         ylabel = "Capacity [MW]",
         title = "Investment Results",
@@ -174,7 +174,7 @@ function plot_investment(model, sets, params)
     # Create a bar chart for the number of installed units
     bar!(
         generator_names,
-        Array(v_investment);
+        Array(v_investment); # Convert the DenseArray from JuMP to an array
         xlabel = "Generation Technology",
         ylabel = "Units [N]",
         title = "",
