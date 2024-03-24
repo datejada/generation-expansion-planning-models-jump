@@ -43,24 +43,24 @@ function read_data(input_folder)
     sets = Dict(:P => P, :SC => SC, :G => G)
 
     # Parameters
-    p_availability    = Dict((row.sc, row.g, row.p) => row.pAviProf for row in eachrow(availability_df)) #availability profile [p.u.]
-    p_demand          = Dict((row.p) => row.pDemand for row in eachrow(demand_df))        #demand per time period [MW]
-    p_investment_cost = Dict((row.g) => row.pInvCost for row in eachrow(generation_df))   #investment cost of generation units [kEUR/MW/year]
-    p_variable_cost   = Dict((row.g) => row.pVarCost for row in eachrow(generation_df))   #variable   cost of generation units [kEUR/MWh]
-    p_unit_capacity   = Dict((row.g) => row.pUnitCap for row in eachrow(generation_df))   #capacity        of generation units [MW]
-    p_sc_prob         = Dict((row.sc) => row.pScProb for row in eachrow(scenario_df))     #probability of scenario [p.u.]
-    p_rp_weight       = 365   #weight of representative period [days]
-    p_ens_cost        = 0.180 #energy not supplied cost    [kEUR/MWh]
+    availability    = Dict((row.sc, row.g, row.p) => row.pAviProf for row in eachrow(availability_df)) #availability profile [p.u.]
+    demand          = Dict((row.p) => row.pDemand for row in eachrow(demand_df))        #demand per time period [MW]
+    investment_cost = Dict((row.g) => row.pInvCost for row in eachrow(generation_df))   #investment cost of generation units [kEUR/MW/year]
+    variable_cost   = Dict((row.g) => row.pVarCost for row in eachrow(generation_df))   #variable   cost of generation units [kEUR/MWh]
+    unit_capacity   = Dict((row.g) => row.pUnitCap for row in eachrow(generation_df))   #capacity        of generation units [MW]
+    sc_prob         = Dict((row.sc) => row.pScProb for row in eachrow(scenario_df))     #probability of scenario [p.u.]
+    rp_weight       = 365   #weight of representative period [days]
+    ens_cost        = 0.180 #energy not supplied cost    [kEUR/MWh]
 
     params = Dict(
-        :p_availability    => p_availability,
-        :p_demand          => p_demand,
-        :p_investment_cost => p_investment_cost,
-        :p_variable_cost   => p_variable_cost,
-        :p_unit_capacity   => p_unit_capacity,
-        :p_sc_prob         => p_sc_prob,
-        :p_rp_weight       => p_rp_weight,
-        :p_ens_cost        => p_ens_cost,
+        :availability    => availability,
+        :demand          => demand,
+        :investment_cost => investment_cost,
+        :variable_cost   => variable_cost,
+        :unit_capacity   => unit_capacity,
+        :sc_prob         => sc_prob,
+        :rp_weight       => rp_weight,
+        :ens_cost        => ens_cost,
     )
     return sets, params
 end
@@ -85,14 +85,14 @@ function create_and_solve_model(sets, params)
     P  = sets[:P]
 
     # Extract parameters
-    p_availability    = params[:p_availability]
-    p_demand          = params[:p_demand]
-    p_investment_cost = params[:p_investment_cost]
-    p_variable_cost   = params[:p_variable_cost]
-    p_unit_capacity   = params[:p_unit_capacity]
-    p_sc_prob         = params[:p_sc_prob]
-    p_rp_weight       = params[:p_rp_weight]
-    p_ens_cost        = params[:p_ens_cost]
+    p_availability    = params[:availability]
+    p_demand          = params[:demand]
+    p_investment_cost = params[:investment_cost]
+    p_variable_cost   = params[:variable_cost]
+    p_unit_capacity   = params[:unit_capacity]
+    p_sc_prob         = params[:sc_prob]
+    p_rp_weight       = params[:rp_weight]
+    p_ens_cost        = params[:ens_cost]
 
     # Model
     model = Model(optimizer_with_attributes(HiGHS.Optimizer, "mip_rel_gap" => 0.0))
@@ -152,7 +152,7 @@ function plot_investment(model, sets, params)
     v_investment = value.(model[:v_investment])
 
     # Calculate the investment capacity in MW
-    v_investment_cap = [v_investment[g] * params[:p_unit_capacity][g] for g in sets[:G]]
+    v_investment_cap = [v_investment[g] * params[:unit_capacity][g] for g in sets[:G]]
 
     # Extract generator names
     generator_names = [string(k[1]) for k in keys(v_investment)]
@@ -261,7 +261,7 @@ function plot_production(model, params)
         )
 
         # Add demand as a black line
-        demand = [params[:p_demand][p] for p in periods]
+        demand = [params[:demand][p] for p in periods]
         plot!(p[i], demand; label = "demand", color = :black, linewidth = 2, linestyle = :dash)
     end
 
@@ -298,7 +298,7 @@ function plot_dual_balance(model, params)
     # For each scenario, create a series
     for sc in scenarios
         dual = [dual_balance[sc, p] for p in periods]
-        plot!(p, periods, 1000 * dual / params[:p_rp_weight]; label = sc, linewidth = 2)
+        plot!(p, periods, 1000 * dual / params[:rp_weight]; label = sc, linewidth = 2)
     end
 
     # Set plot attributes
