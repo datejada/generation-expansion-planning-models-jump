@@ -103,9 +103,23 @@ function create_and_solve_model(sets, params)
     @variable(model, 0 ≤ v_investment[G], Int)            #number of installed generation units [N]
 
     # Expressions
-    e_investment_cost = @expression(model, sum(p_investment_cost[g] * p_unit_capacity[g] * v_investment[g] for g in G))
-    e_variable_cost   = @expression(model, p_rp_weight * sum(p_sc_prob[sc] * p_variable_cost[g] * v_production[sc, g, p] for sc in SC, g in G, p in P))
-    e_ens_cost        = @expression(model, p_rp_weight * sum(p_sc_prob[sc] * p_ens_cost * v_ens[sc, p] for sc in SC, p in P))
+    e_investment_cost = @expression(
+        model,
+        sum(p_investment_cost[g] * p_unit_capacity[g] * v_investment[g] for g in G)
+    )
+
+    e_variable_cost = @expression(
+        model,
+        p_rp_weight * sum(
+            p_sc_prob[sc] * p_variable_cost[g] * v_production[sc, g, p] for sc in SC, g in G,
+            p in P
+        )
+    )
+
+    e_ens_cost = @expression(
+        model,
+        p_rp_weight * sum(p_sc_prob[sc] * p_ens_cost * v_ens[sc, p] for sc in SC, p in P)
+    )
 
     # Objective function
     @objective(model, Min, e_investment_cost + e_variable_cost + e_ens_cost)
