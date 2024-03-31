@@ -483,7 +483,7 @@ st3,sc4,ocgt,h07,0.0
 st3,sc7,solar,h04,0.0
 st3,sc9,wind,h21,1394.0
 st3,sc7,wind,h21,350.00000000000006
-st3,sc4,ccgt,h03,743.0
+st3,sc4,ccgt,h03,743.0000000000001
 st3,sc6,wind,h20,1393.0
 st3,sc4,ccgt,h08,545.0
 st3,sc6,wind,h22,1384.0
@@ -601,7 +601,7 @@ st3,sc7,solar,h05,0.0
 st3,sc11,wind,h10,867.4000000000001
 st3,sc6,wind,h06,939.0
 st3,sc9,wind,h07,974.0
-st3,sc4,ocgt,h03,0.0
+st3,sc4,ocgt,h03,-7.616129948928589e-14
 st3,sc5,wind,h03,1018.0
 st3,sc10,wind,h01,275.0
 st3,sc12,solar,h17,45.5
@@ -701,7 +701,7 @@ st3,sc9,ocgt,h08,0.0
 st2,sc3,solar,h04,0.0
 st3,sc6,ocgt,h08,0.0
 st3,sc5,wind,h12,760.3000000000001
-st2,sc2,ccgt,h17,0.0
+st2,sc2,ccgt,h17,-0.0
 st2,sc3,ocgt,h17,0.0
 st2,sc2,ccgt,h13,0.0
 st3,sc12,wind,h01,1188.0
