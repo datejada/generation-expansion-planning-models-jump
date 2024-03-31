@@ -221,7 +221,7 @@ function add_cut(first_stage_model, subproblem, sets, params, p_investment, iter
     # Add Benders' cut
     @constraint(
         first_stage_model,
-        base_name = "cut_iter_$iteration)",
+        base_name = "cut_iter_$(iteration))",
         first_stage_model[:v_theta] >=
         p_subproblem_obj + sum(
             -p_dual[sc, g, p] *
