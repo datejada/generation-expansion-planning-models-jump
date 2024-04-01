@@ -123,7 +123,7 @@ function create_and_solve_subproblem(sets, params, p_investment)
     optimize!(model)
 
     # Check if the model is optimal
-    @assert is_solved_and_feasible(model; dual = true)
+    @assert is_solved_and_feasible(model; dual = true) # Check if the model is optimal and there is a dual solution
 
     # Return results
     return model

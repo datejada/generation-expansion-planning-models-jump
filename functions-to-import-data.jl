@@ -159,3 +159,61 @@ function get_stochastic_path_to_node(scenario_tree, stage, scenario)
 
     return path
 end
+
+"""
+    read_aro_data(input_folder)
+
+Reads data from CSV files and returns sets and parameters.
+
+# Arguments
+- `input_folder::String`: The path to the folder containing the input CSV files.
+
+# Returns
+- `sets::Dict{Symbol, Any}`: A dictionary containing the sets P, and G.
+- `params::Dict{Symbol, Any}`: A dictionary containing the parameters `p_availability`, `p_demand`, `p_investment_cost`, `p_variable_cost`, `p_unit_capacity`, `p_rp_weight`, and `p_ens_cost`.
+"""
+function read_aro_data(input_folder)
+    # Files names
+    demand_file       = joinpath(input_folder, "iGEP_Data_Demand.csv")
+    generation_file   = joinpath(input_folder, "iGEP_Data_Generation.csv")
+    availability_file = joinpath(input_folder, "iGEP_Data_Availability.csv")
+
+    # Read data
+    demand_df       = CSV.read(demand_file, DataFrames.DataFrame)
+    generation_df   = CSV.read(generation_file, DataFrames.DataFrame)
+    availability_df = CSV.read(availability_file, DataFrames.DataFrame)
+
+    # Sets
+    P = demand_df.p     #time periods (e.g., hours)
+    G = generation_df.g #generation units
+
+    sets = Dict(:P => P, :G => G)
+
+    # Parameters
+    max_availability    = Dict((row.g, row.p) => row.pMaxAviProf for row in eachrow(availability_df)) #maximum availability profile [p.u.]
+    min_availability    = Dict((row.g, row.p) => row.pMinAviProf for row in eachrow(availability_df)) #minimum availability profile [p.u.]
+    demand              = Dict((row.p) => row.pDemand for row in eachrow(demand_df))         #demand per time period [MW]
+    investment_cost     = Dict((row.g) => row.pInvCost for row in eachrow(generation_df))    #investment cost of generation units [kEUR/MW/year]
+    variable_cost       = Dict((row.g) => row.pVarCost for row in eachrow(generation_df))    #variable   cost of generation units [kEUR/MWh]
+    unit_capacity       = Dict((row.g) => row.pUnitCap for row in eachrow(generation_df))    #capacity        of generation units [MW]
+    availability_factor = Dict((row.g) => row.pAvaiFactor for row in eachrow(generation_df)) #generation availability factor [p.u.]
+    rp_weight           = 365   #weight of representative period [days]
+    ens_cost            = 0.180 #energy not supplied cost   [kEUR/MWh]
+    exc_cost            = 0.180 #excess cost                [kEUR/MWh]
+    uncertainty_budget  = 0.5   #uncertainty budget
+
+    params = Dict(
+        :max_availability    => max_availability,
+        :min_availability    => min_availability,
+        :demand              => demand,
+        :investment_cost     => investment_cost,
+        :variable_cost       => variable_cost,
+        :unit_capacity       => unit_capacity,
+        :availability_factor => availability_factor,
+        :rp_weight           => rp_weight,
+        :ens_cost            => ens_cost,
+        :exc_cost            => exc_cost,
+        :uncertainty_budget  => uncertainty_budget,
+    )
+    return sets, params
+end

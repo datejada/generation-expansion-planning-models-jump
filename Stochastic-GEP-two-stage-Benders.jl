@@ -116,7 +116,7 @@ function create_and_solve_subproblem(sets, params, p_investment)
     optimize!(model)
 
     # Check if the model is optimal
-    @assert is_solved_and_feasible(model; dual = true)
+    @assert is_solved_and_feasible(model; dual = true) # Check if the model is optimal and there is a dual solution
 
     # Return results
     return model
@@ -155,7 +155,7 @@ function add_cut(first_stage_model, subproblem, sets, params, p_investment, iter
     # Add Benders' cut
     @constraint(
         first_stage_model,
-        base_name = "cut_iter_$(iteration))",
+        base_name = "cut_iter_$(iteration)",
         first_stage_model[:v_theta] >=
         p_subproblem_obj + sum(
             -p_dual[sc, g, p] *
@@ -181,6 +181,3 @@ function print_iteration(k, args...)
     println(lpad(k, 9), " ", join(f.(args), " "))
     return
 end
-
-
-

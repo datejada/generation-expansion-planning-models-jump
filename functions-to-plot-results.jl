@@ -185,6 +185,66 @@ function plot_two_stage_production(model, params)
 end
 
 """
+    plot_aro_production(model, params)
+
+Plot the production of generators and the demand for each scenario.
+
+# Arguments
+- `model`: The optimization model containing the production variables.
+- `params`: A dictionary containing the parameters of the model.
+
+# Returns
+- `p`: A plot object showing the production and demand for each scenario.
+
+"""
+function plot_aro_production(model, params)
+    # Extract the variable v_production and v_ens from the model
+    v_production = value.(model[:v_production])
+
+    # Extract unique generators, and periods
+    generators = unique([k[1] for k in keys(v_production)])
+    generators = push!(generators, "ens")
+    periods    = unique([k[2] for k in keys(v_production)])
+
+    # Create a plot for each scenario
+    p = plot()
+
+    production_table = Containers.rowtable(value, model[:v_production]; header = [:g, :p, :value])
+    production_df = DataFrames.DataFrame(production_table)
+
+    ens_table = Containers.rowtable(value, model[:v_ens]; header = [:p, :value])
+    ens_df = DataFrames.DataFrame(ens_table)
+
+    total_production_df = production_df
+
+    # unstack column g
+    total_production_df = unstack(total_production_df, :g, :value)
+
+    # drop column P
+    total_production_df = total_production_df[:, 2:end]
+
+    # add column ens to production_tmp
+    total_production_df = hcat(total_production_df, ens_df[:, 2])
+
+    groupedbar!(
+        Matrix(total_production_df);
+        bar_position = :stack,
+        labels = reshape(generators, 1, length(generators)),
+        legend = :topleft,
+        title = "",
+    )
+
+    # Add demand as a black line
+    demand = [params[:demand][p] for p in periods]
+    plot!(p, demand; label = "demand", color = :black, linewidth = 2, linestyle = :dash)
+
+    # Set plot attributes
+    plot!(; ylabel = "Production", legend = :outertopright)
+
+    return p
+end
+
+"""
     plot_dual_balance(model, params)
 
 Plot the dual variable of the balance equation for different scenarios and periods.
