@@ -3,14 +3,14 @@
 """
     create_first_stage_model(sets, params)
 
-This function creates the first-stage subproblem in the Benders' Decomposition.
+This function creates the first-stage problem in the Benders' Decomposition.
 
 # Arguments
 - `sets::Dict{Symbol, Any}`: A dictionary containing the sets of the problem.
 - `params::Dict{Symbol, Any}`: A dictionary containing the parameters of the problem.
 
 # Returns
-- `model::Model`: JuMP model with the first-stage problem.
+- `model::Model`: JuMP model with the first-stage  problem.
 """
 function create_first_stage_model(sets, params)
     # Extract sets
@@ -47,12 +47,12 @@ end
 """
     create_and_solve_subproblem(sets, params)
 
-This function creates the first-stage subproblem in the Benders' Decomposition.
+This function creates the subproblem in the Benders' Decomposition.
 
 # Arguments
 - `sets::Dict{Symbol, Any}`: A dictionary containing the sets of the problem.
 - `params::Dict{Symbol, Any}`: A dictionary containing the parameters of the problem.
-- `p_investment::Array{Float64}`: The optimal investment solution from the first-stage problem.
+- `p_investment::Array{Float64}`: The optimal investment solution from the subproblem.
 
 # Returns
 - `model::Model`: JuMP model with the subproblem.
