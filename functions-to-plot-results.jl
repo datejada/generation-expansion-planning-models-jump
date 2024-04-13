@@ -332,25 +332,24 @@ function plot_dual_balance(model, params)
 end
 
 """
-    plot_benders_gap(df_Benders_interations)
+    plot_gap(df_interations)
 
 Plot the Benders' gap.
 
 # Arguments
-- `df_Benders_interations`: A DataFrame containing the Benders' iterations.
+- `df_interations`: A DataFrame containing the decomposition iterations.
 
 # Returns
-- `p`: A plot object showing the Benders' gap.
+- `p`: A plot object showing the decomposition gap.
 
 """
-function plot_benders_gap(df_Benders_interations)
-    p = @df df_Benders_interations plot(
+function plot_gap(df_interations)
+    p = @df df_interations plot(
         :iteration,
         :gap,
         label = "Gap",
         xlabel = "Iteration",
         ylabel = "Gap",
-        title = "Benders Decomposition",
         lw = 2,
         xticks = 0:1:MAXIMUM_ITERATIONS,
         color = :darkblue,
@@ -359,25 +358,24 @@ function plot_benders_gap(df_Benders_interations)
 end
 
 """
-    plot_benders_bounds(df_Benders_interations)
+    plot_bounds(df_interations)
 
 Plot the Benders' bounds.
 
 # Arguments
-- `df_Benders_interations`: A DataFrame containing the Benders' bounds.
+- `df_interations`: A DataFrame containing the decomposition bounds.
 
 # Returns
-- `p`: A plot object showing the Benders' bounds.
+- `p`: A plot object showing the decomposition bounds.
 
 """
-function plot_benders_bounds(df_Benders_interations)
-    p = @df df_Benders_interations plot(
+function plot_bounds(df_interations)
+    p = @df df_interations plot(
         :iteration,
         [:lower_bound, :upper_bound],
         label = ["Lower Bound" "Upper Bound"],
         xlabel = "Iteration",
         ylabel = "kEUR",
-        title = "Benders Decomposition",
         lw = 2,
         xticks = 0:1:MAXIMUM_ITERATIONS,
     )
