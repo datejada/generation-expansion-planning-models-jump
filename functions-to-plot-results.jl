@@ -48,6 +48,57 @@ function plot_two_stage_investment(model, sets, params)
 end
 
 """
+    plot_two_stage_investment_explicit_formulation(model)
+
+Plot the investment in generation units for the two-stage problem.
+
+# Arguments
+- `model`: The model containing the investment variable.
+- `sets`: A dictionary containing the sets of the problem.
+- `params`: A dictionary containing the parameters of the problem.
+
+"""
+function plot_two_stage_investment_explicit_formulation(model, sets, params)
+    investment_table = Containers.rowtable(value, model[:v_investment]; header = [:sc, :g, :units])
+    investment_df = DataFrames.DataFrame(investment_table)
+
+    # Create a new column with the MW capacity
+    investment_df[!, :capacity] =
+        [row.units * params[:unit_capacity][row.g] for row in eachrow(investment_df)]
+
+    # Create a bar chart subplots
+    p = plot(; layout = (2, 1))
+
+    # Create a bar chart for the investment in MW
+    @df investment_df groupedbar!(
+        :g,
+        :capacity,
+        group = (:sc),
+        xlabel = "",
+        ylabel = "Capacity [MW]",
+        title = "Investment Results",
+        legend = true,
+        #bar_position = :stack,
+        subplot = 1,
+    )
+
+    # Create a bar chart for the number of installed units
+    @df investment_df groupedbar!(
+        :g,
+        :units,
+        group = (:sc),
+        xlabel = "Generation Technology",
+        ylabel = "Units [N]",
+        title = "",
+        legend = false,
+        #bar_position = :stack,
+        subplot = 2,
+    )
+
+    return p
+end
+
+"""
     plot_multi_stage_investment(model)
 
 Plot the investment in generation units for the multi-stage problem.

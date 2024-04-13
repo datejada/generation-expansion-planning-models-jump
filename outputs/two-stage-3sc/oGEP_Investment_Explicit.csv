@@ -1,0 +1,13 @@
+sc,g,instal_units
+sc1,ocgt,0.0
+sc2,ocgt,0.0
+sc3,ocgt,0.0
+sc1,ccgt,2.0
+sc2,ccgt,2.0
+sc3,ccgt,2.0
+sc1,wind,35.0
+sc2,wind,35.0
+sc3,wind,35.0
+sc1,solar,44.99999999999998
+sc2,solar,44.99999999999998
+sc3,solar,44.99999999999998
