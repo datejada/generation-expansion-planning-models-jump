@@ -4,13 +4,13 @@
 
 The following files solve the GEP problem for three scenarios of wind and solar production using different approaches:
 
-* **Stochastic-GEP-two-stage-nb.ipynb**: Two-Stage Stochastic GEP
-* **Stochastic-GEP-two-stage-Benders-nb.ipynb**: Two-Stage Stochastic GEP solved using Benders' Decomposition
-* **Stochastic-GEP-two-stage-Benders-multicut-nb.ipynb**: Two-Stage Stochastic GEP solved using Benders' Decomposition with multi-cuts
-* **Stochastic-GEP-two-stage-LR-nb.ipynb**: Two-Stage Stochastic GEP solved using Lagrangian Relaxation
-* **Stochastic-GEP-multi-stage-nb.ipynb**: Multi-Stage Stochastic GEP
-* **Static-robust-optimization-GEP-nb.ipynb**: Static Robust Optimization (Scenario-based) GEP
-* **Adaptive-robust-optimization-GEP-nb.ipynb**: Adaptive Robust Optimization (ARO) GEP
+* **Stochastic-GEP-two-stage-nb.ipynb**
+* **Stochastic-GEP-two-stage-Benders-nb.ipynb**
+* **Stochastic-GEP-two-stage-Benders-multicut-nb.ipynb**
+* **Stochastic-GEP-two-stage-LR-nb.ipynb**
+* **Stochastic-GEP-multi-stage-nb.ipynb**
+* **Static-robust-optimization-GEP-nb.ipynb**
+* **Adaptive-robust-optimization-GEP-nb.ipynb**
 
 These examples show basic concepts for learning optimization under uncertainty in power systems.
 
