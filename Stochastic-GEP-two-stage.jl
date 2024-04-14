@@ -13,7 +13,7 @@ This function creates and solves a mathematical optimization model for a central
 - `model::Model`: The optimized model if a solution is found.
 - `String`: A warning message if no solution is found.
 """
-function create_and_solve_model(sets, params)
+function create_and_solve_model(sets, params; investments_to_fix = nothing)
     # Extract sets
     SC = sets[:SC]
     G  = sets[:G]
@@ -36,6 +36,13 @@ function create_and_solve_model(sets, params)
     @variable(model, 0 ≤ v_production[SC, G, P])          #production [MW] 
     @variable(model, 0 ≤ v_ens[SC, p in P] ≤ p_demand[p]) #energy not supplied [MW]
     @variable(model, 0 ≤ v_investment[G], Int)            #number of installed generation units [N]
+
+    # fix investment variable if investments_to_fix is not nothing
+    if investments_to_fix != nothing
+        for g in G
+            fix(v_investment[g], investments_to_fix[g]; force = true)
+        end
+    end
 
     # Expressions
     e_investment_cost = @expression(
