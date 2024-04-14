@@ -351,7 +351,7 @@ function plot_gap(df_interations)
         xlabel = "Iteration",
         ylabel = "Gap",
         lw = 2,
-        xticks = 0:1:MAXIMUM_ITERATIONS,
+        xticks = 0:2:MAXIMUM_ITERATIONS,
         color = :darkblue,
     )
     return p
@@ -377,7 +377,7 @@ function plot_bounds(df_interations)
         xlabel = "Iteration",
         ylabel = "kEUR",
         lw = 2,
-        xticks = 0:1:MAXIMUM_ITERATIONS,
+        xticks = 0:2:MAXIMUM_ITERATIONS,
     )
     return p
 end
@@ -403,7 +403,40 @@ function plot_investment_per_iteration(df_investment_per_iteration)
         ylabel = "Investment [units]",
         title = "Investment per Iteration",
         lw = 2,
-        xticks = 0:1:MAXIMUM_ITERATIONS,
+        xticks = 0:2:MAXIMUM_ITERATIONS,
     )
+    return p
+end
+
+"""
+    plot_investment_per_iteration_LR(df_investment_per_iteration)
+
+Plot the investment per iteration.
+
+# Arguments
+- `df_investment_per_iteration`: A DataFrame containing the investment per iteration.
+
+# Returns
+- `p`: A plot object showing the investment per iteration.
+
+"""
+function plot_investment_per_iteration_LR(df_investment_per_iteration)
+    p = @df df_investment_per_iteration plot(
+        :iteration,
+        :investment,
+        group = (:scenario, :generator),
+        ylabel = "[units]",
+        lw = 2,
+        layout = (4, 1),
+        size = (800, 600),
+        xticks = 0:2:MAXIMUM_ITERATIONS,
+    )
+
+    # title only in the first subplot
+    title!(p[1], "Investment per Iteration")
+
+    # xlabel only in the last subplot
+    xlabel!(p[end], "Iteration")
+
     return p
 end
