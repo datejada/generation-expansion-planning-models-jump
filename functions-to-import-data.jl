@@ -200,7 +200,7 @@ function read_aro_data(input_folder)
     rp_weight           = 365   #weight of representative period [days]
     ens_cost            = 0.180 #energy not supplied cost   [kEUR/MWh]
     exc_cost            = 0.180 #excess cost                [kEUR/MWh]
-    uncertainty_budget  = 0.5   #uncertainty budget
+    uncertainty_budget  = 0.2   #uncertainty budget
 
     params = Dict(
         :max_availability    => max_availability,
