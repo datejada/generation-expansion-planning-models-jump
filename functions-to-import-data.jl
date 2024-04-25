@@ -196,11 +196,12 @@ function read_aro_data(input_folder)
     investment_cost     = Dict((row.g) => row.pInvCost for row in eachrow(generation_df))    #investment cost of generation units [kEUR/MW/year]
     variable_cost       = Dict((row.g) => row.pVarCost for row in eachrow(generation_df))    #variable   cost of generation units [kEUR/MWh]
     unit_capacity       = Dict((row.g) => row.pUnitCap for row in eachrow(generation_df))    #capacity        of generation units [MW]
+    is_renewable        = Dict((row.g) => row.pIsRenew for row in eachrow(generation_df))    #renewable generation units (1: renewable, 0: non-renewable)
     availability_factor = Dict((row.g) => row.pAvaiFactor for row in eachrow(generation_df)) #generation availability factor [p.u.]
     rp_weight           = 365   #weight of representative period [days]
     ens_cost            = 0.180 #energy not supplied cost   [kEUR/MWh]
     exc_cost            = 0.180 #excess cost                [kEUR/MWh]
-    uncertainty_budget  = 0.2   #uncertainty budget
+    uncertainty_budget  = 0.5   #uncertainty budget
 
     params = Dict(
         :max_availability    => max_availability,
@@ -209,6 +210,7 @@ function read_aro_data(input_folder)
         :investment_cost     => investment_cost,
         :variable_cost       => variable_cost,
         :unit_capacity       => unit_capacity,
+        :is_renewable        => is_renewable,
         :availability_factor => availability_factor,
         :rp_weight           => rp_weight,
         :ens_cost            => ens_cost,

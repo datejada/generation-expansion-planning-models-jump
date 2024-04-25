@@ -1,5 +1,5 @@
 g,pVarCost,pInvCost,pUnitCap,pIsRenew,pAvaiFactor
-ocgt,0.07,25,100,0,1
-ccgt,0.05,40,400,0,1
-wind,0.001,70,50,1,1
-solar,0,50,10,1,1
+ocgt,0.07,25,100,false,1
+ccgt,0.05,40,400,false,1
+wind,0.001,70,50,true,1
+solar,0,50,10,true,1

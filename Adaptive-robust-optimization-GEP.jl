@@ -68,11 +68,15 @@ function create_and_solve_subproblem(sets, params, p_investment)
     p_demand        = params[:demand]
     p_variable_cost = params[:variable_cost]
     p_unit_capacity = params[:unit_capacity]
+    p_is_renewable  = params[:is_renewable]
     p_avai_factor   = params[:availability_factor]
     p_rp_weight     = params[:rp_weight]
     p_ens_cost      = params[:ens_cost]
     p_exc_cost      = params[:exc_cost]
     p_uncert_budget = params[:uncertainty_budget]
+
+    # Create subsets
+    R = [r for r in G if p_is_renewable[r]]
 
     # Scalar values
     p_BigM = 5000 # Big M value
@@ -119,13 +123,20 @@ function create_and_solve_subproblem(sets, params, p_investment)
     @objective(model, Max, e_variable_cost + e_ens_cost + e_exc_cost)
 
     # Constraints
-    # - uncertainty budget
+    # - uncertainty budget (only for renewable sources)
     @constraint(
         model,
         c_uncertainty_budget,
-        sum(p_avai_factor[g] - v_avai[g] for g in G) ≤
-        sum(p_avai_factor[g] for g in G) * p_uncert_budget
+        sum(p_avai_factor[r] - v_avai[r] for r in R) ≤
+        sum(p_avai_factor[r] for r in R) * p_uncert_budget
     )
+
+    # - fix the v_avai for non-renewable sources
+    for g in G
+        if !p_is_renewable[g]
+            fix(v_avai[g], p_avai_factor[g]; force = true)
+        end
+    end
 
     # - balance equation
     @constraint(
