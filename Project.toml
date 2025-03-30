@@ -11,3 +11,9 @@ StatsPlots = "f3b207a7-027a-5e70-b257-86293d7955fd"
 
 [compat]
 julia = "1"
+CSV = "0.10"
+DataFrames = "1.7"
+HiGHS = "1.15"
+JuMP = "1.25"
+Plots = "1.40"
+StatsPlots  = "0.15"
